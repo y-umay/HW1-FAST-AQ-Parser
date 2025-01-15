@@ -1,5 +1,5 @@
 # write tests for parsers
-
+import os
 from seqparser import (
         FastaParser,
         FastqParser)
@@ -33,7 +33,25 @@ def test_FastaParser():
     files that are blank or corrupted in some way. Two example Fasta files are
     provided in /tests/bad.fa and /tests/empty.fa
     """
-    pass
+    current_dir = os.path.dirname(__file__)
+    # test corrupted data
+    bad_path = os.path.join(current_dir, "bad.fa")
+    parser = FastaParser(bad_path)
+    with pytest.raises(ValueError, match="0 lines"):  
+        for _ in parser:
+            pass
+    # test blank data
+    blank_path = os.path.join(current_dir, "blank.fa")
+    parser = FastaParser(blank_path)
+    with pytest.raises(ValueError, match="0 lines"):  
+        for _ in parser:
+            pass
+    # test empty_line
+    empty_line_path = os.path.join(current_dir, "empty_line.fa")
+    parser = FastaParser(empty_line_path)
+    with pytest.raises(ValueError, match="empty line"):  
+        for _ in parser:
+            pass
 
 
 def test_FastaFormat():
@@ -41,8 +59,14 @@ def test_FastaFormat():
     Test to make sure that a fasta file is being read in if a fastq file is
     read, the first item is None
     """
-    pass
-
+    current_dir = os.path.dirname(__file__)
+    fastq_path = os.path.join(current_dir, "..", "data", "test.fq")
+    parser = FastaParser(fastq_path)
+    as_list = list(parser)
+    assert len(as_list) > 0
+    assert len(as_list[0]) == 2
+    assert as_list[0][0] is None
+    
 
 def test_FastqParser():
     """
