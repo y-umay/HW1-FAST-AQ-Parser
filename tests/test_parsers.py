@@ -104,5 +104,5 @@ def test_FastqFormat():
     parser = FastqParser(fasta_path)
     as_list = list(parser)
     assert len(as_list) > 0
-    assert len(as_list[0]) == 2
+    assert len(as_list[0]) == 3
     assert as_list[0][0] is None
