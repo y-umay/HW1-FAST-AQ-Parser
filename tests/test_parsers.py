@@ -74,11 +74,35 @@ def test_FastqParser():
     an instance of your FastqParser class and assert that it properly reads 
     in the example Fastq File.
     """
-    pass
+    current_dir = os.path.dirname(__file__)
+    # test corrupted data
+    bad_path = os.path.join(current_dir, "bad.fq")
+    parser = FastqParser(bad_path)
+    with pytest.raises(ValueError, match="0 lines"):  
+        for _ in parser:
+            pass
+    # test blank data
+    blank_path = os.path.join(current_dir, "blank.fq")
+    parser = FastqParser(blank_path)
+    with pytest.raises(ValueError, match="0 lines"):  
+        for _ in parser:
+            pass
+    # test empty_line
+    empty_line_path = os.path.join(current_dir, "empty_line.fq")
+    parser = FastqParser(empty_line_path)
+    with pytest.raises(ValueError, match="empty line"):  
+        for _ in parser:
+            pass
 
 def test_FastqFormat():
     """
     Test to make sure fastq file is being read in. If this is a fasta file, the
     first line is None
     """
-    pass
+    current_dir = os.path.dirname(__file__)
+    fasta_path = os.path.join(current_dir, "..", "data", "test.fa")
+    parser = FastqParser(fasta_path)
+    as_list = list(parser)
+    assert len(as_list) > 0
+    assert len(as_list[0]) == 2
+    assert as_list[0][0] is None
